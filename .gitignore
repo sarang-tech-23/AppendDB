@@ -1,0 +1,80 @@
+# Python compiled files
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env/
+virtualenv/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Package and build files
+*.egg
+*.egg-info/
+dist/
+build/
+*.whl
+
+# Testing and coverage
+*.pytest_cache/
+coverage/
+.coverage
+*.cover
+htmlcov/
+
+# Logs and temporary files
+*.log
+*.log.*
+*.tmp
+temp/
+tmp/
+
+# Environment and configuration files
+.env
+*.env
+.env.local
+.env.*.local
+config.ini
+secrets.json
+*.key
+*.pem
+
+# Cache and miscellaneous
+*.cache
+*.bak
+*.swp
+*~
+
+# Jupyter notebooks
+*.ipynb_checkpoints/
+
+# Database and migration files
+*.sqlite3
+migrations/
+
+# Dependency lock files (optional, include if you want to track them)
+# requirements.txt
+# Pipfile.lock
+
+# Documentation build files
+docs/_build/
+docs/build/
+
+# Profiling and debugging
+*.prof
+*.lprof
+*.dump
+*.pickle
