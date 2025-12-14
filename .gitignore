@@ -78,3 +78,6 @@ docs/build/
 *.lprof
 *.dump
 *.pickle
+
+
+# storage folder
