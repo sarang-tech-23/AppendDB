@@ -38,8 +38,9 @@ def conn_handler(conn):
         return msg_bytes.decode().strip()
     
     req_data = recv_data()
+    
     print(f'clint_req: {req_data}')
-    response = process_req_data(req_data)
+    response = process_req_data(req_data) + b'\n'
     conn.send(response)
 
 def generate_keydir():
@@ -86,7 +87,7 @@ def start_server(host="0.0.0.0", port=9001):
 
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((host, port))
-    server.listen(1)
+    server.listen(200)
 
     print(f"Server listening on {host}:{port}")
 
@@ -94,7 +95,7 @@ def start_server(host="0.0.0.0", port=9001):
         conn, addr = server.accept()
         print(f"Client connected: {addr}")
         conn_handler(conn)
-        conn.close()
+        # connection will be closed from the client
 
 if __name__ == "__main__":
     start_server()
