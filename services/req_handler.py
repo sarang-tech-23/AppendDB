@@ -2,6 +2,8 @@ import os
 from services.serialization import encode_record, decode_record
 import services.memory_var as mem
 from services.configs import Config
+from services.file_handler import create_next_file
+from services.compaction import run_compaction
 
 def process_req_data(data):
     req_type, kv_data = data.split(':::')
@@ -15,30 +17,18 @@ def process_req_data(data):
     else:
         return b'invalid request type'
 
-# get the latest active file, this needs to be store in memory 
-def create_next_file(file_path):
-    file_prefix_int = int(file_path.split('/')[-1][:-4])
-    next_file_prefix_int = file_prefix_int + 1
-    next_file_path = os.path.join(Config.STORAGE_PATH, f'{next_file_prefix_int}.bin')
-    open(next_file_path, "a").close()
-    return next_file_path
-
 def get_current_active_file():
-    # create new file and return
     file_size_bytes = os.path.getsize(mem.current_active_file)
-
-    print(f'>>> new_bin_file_cond:::{file_size_bytes > Config.MAX_DATA_FILE_SIZE}')
-    print(f'>>> {file_size_bytes}__{type(file_size_bytes)} :::: {Config.MAX_DATA_FILE_SIZE}___{type(Config.MAX_DATA_FILE_SIZE)}')
     if file_size_bytes > Config.MAX_DATA_FILE_SIZE:
-        mem.current_active_file = create_next_file(mem.current_active_file)
-    print(f'>>> current_active_file:::{mem.current_active_file}     file_size::::{file_size_bytes}')
+        run_compaction()
+        mem.current_active_file = create_next_file()
     return mem.current_active_file
-
 
 def handle_write(payload):
     payload = payload.rstrip('\n')
     key, value = payload.split(':')
-    record = encode_record(key, value)
+
+    record, timestamp = encode_record(key, value)
     log_file = get_current_active_file()
 
     cur_offset = 0
@@ -46,7 +36,13 @@ def handle_write(payload):
         cur_offset = f.tell()
         f.write(record)
     file_name = log_file.split('/')[-1]
-    mem.keydir[key] = {'file_path': file_name, 'key_pos': cur_offset }
+
+    # tracking for compaction process
+    mem.bytes_on_disk += len(key)
+    if mem.keydir.get(key) is None:
+        mem.bytes_on_ram += len(key)
+    
+    mem.keydir[key] = {'file_path': file_name, 'key_pos': cur_offset, 'timestamp': timestamp }
     return b'ack'
 
 def handle_delete(payload):
@@ -60,6 +56,11 @@ def handle_delete(payload):
         cur_offset = f.tell()
         f.write(record)
     file_name = log_file.split('/')[-1]
+
+    mem.bytes_on_disk += len(key)
+    if mem.keydir.get(key) is None:
+        mem.bytes_on_ram += len(key)
+
     mem.keydir[key] = {'file_path': file_name, 'key_pos': cur_offset }
     return b'ack'
 
