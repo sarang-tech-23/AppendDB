@@ -29,6 +29,8 @@ def run_compaction():
         # delete old data files
         for f in cur_data_files:
             os.remove(os.path.join(Config.STORAGE_PATH, f))
+
+        mem.current_merge_file = None
             
 def write_merges(key, value, timestamp):
     cur_merge_file = get_cur_merge_file()

@@ -9,9 +9,6 @@ def create_next_file():
     mem.next_file_id += 1
     return next_file_path
 
-
-
-
 def get_cur_merge_file():
     if mem.current_merge_file is None or os.path.getsize(mem.current_merge_file) > Config.MAX_DATA_FILE_SIZE:
         mem.current_merge_file = create_next_file()

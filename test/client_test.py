@@ -1,5 +1,5 @@
 from client import AppendDbClient
-import time
+import time, string, random
 db_handler = AppendDbClient()
 
 
@@ -8,7 +8,8 @@ cnt = 0
 while True:
     cnt += 1
     for i in range(1, 10):
-        r = db_handler.write_data(f'name_{i}', f'{cnt}__sar_{i*i}')
+        s = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+        r = db_handler.write_data(f'name_{i}', f'{cnt}__{s}_{i*i}')
         print(f'>> {i}_write_response: {r}')
 
 
