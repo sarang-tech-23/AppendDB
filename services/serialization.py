@@ -1,10 +1,11 @@
 import time, struct, zlib
 
-def encode_record(key, value):
+def encode_record(key, value, timestamp=None):
     key_bytes = key.encode()
     value_bytes = value.encode()
 
-    timestamp = int(time.time())
+    if not timestamp:
+        timestamp = int(time.time())
     key_size = len(key_bytes)
     value_size = len(value_bytes)
 
@@ -23,7 +24,7 @@ def encode_record(key, value):
     # we then store crc + body in the binary file
     record = struct.pack('>I', crc) + body
 
-    return record
+    return record, timestamp
 
 # f is the file object, its pointer should be to a particular offset for that key info
 def decode_record(f):
