@@ -6,7 +6,6 @@ from services.file_handler import get_cur_merge_file
 
 
 def run_compaction():
-    print(f'>>> compaction___ram_key_size_{mem.bytes_on_ram}  ___ disk_key_size_{mem.bytes_on_disk}')
     if (mem.bytes_on_disk / mem.bytes_on_ram) > 2:
         # get list of all files accept current_active_file
         cur_data_files = [

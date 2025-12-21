@@ -1,7 +1,7 @@
 import socket
 
 class AppendDbClient:
-    def __init__(self, host="0.0.0.0", port=9001):
+    def __init__(self, host="127.0.0.1", port=9001):
         self.host = host
         self.port = port
 
